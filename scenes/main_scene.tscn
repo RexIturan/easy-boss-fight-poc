@@ -1,6 +1,27 @@
-[gd_scene load_steps=11 format=3 uid="uid://digx4yvk3x66f"]
+[gd_scene load_steps=17 format=3 uid="uid://digx4yvk3x66f"]
 
-[ext_resource type="Script" uid="uid://b0vl8a6jh8hdk" path="res://code/PlayerController.cs" id="1_w2twt"]
+[ext_resource type="Script" uid="uid://boldtg3vt0c3a" path="res://code/ui/BossHealthbar.cs" id="1_c16ls"]
+[ext_resource type="Script" uid="uid://5vyye30d77ho" path="res://code/ui/PlayerHealthDisplay.cs" id="1_rt2n2"]
+[ext_resource type="PackedScene" uid="uid://dlt011oymsi5u" path="res://code/ui/player_life_display.tscn" id="2_c16ls"]
+[ext_resource type="PackedScene" uid="uid://l4el6u4xl8hq" path="res://code/player/player.tscn" id="3_pu3yx"]
+[ext_resource type="PackedScene" uid="uid://ccgdso7vl6sum" path="res://code/boss/boss.tscn" id="4_pu3yx"]
+[ext_resource type="PackedScene" uid="uid://b4q63mvngp8m2" path="res://code/enemy/spike.tscn" id="5_gubc5"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_18nlu"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.1, 0.1, 0.1, 0.3)
+corner_detail = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c1pb6"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.938753, 0, 0.261452, 1)
+corner_detail = 6
 
 [sub_resource type="Gradient" id="Gradient_und3l"]
 colors = PackedColorArray(0.442, 0.7072, 0.85, 1, 0.232, 0.377, 0.58, 1)
@@ -23,13 +44,81 @@ size = Vector2(200, 10)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pw63i"]
 size = Vector2(4, 7)
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_und3l"]
-radius = 1.0
-height = 4.0
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_und3l"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7ykc4"]
+size = Vector2(4, 59)
 
 [node name="main" type="Node2D"]
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="HUD"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/Control/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD/Control/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="ProgressBar" type="ProgressBar" parent="HUD/Control/VBoxContainer/VBoxContainer/MarginContainer" node_paths=PackedStringArray("health")]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_18nlu")
+theme_override_styles/fill = SubResource("StyleBoxFlat_c1pb6")
+step = 1.0
+value = 50.0
+show_percentage = false
+script = ExtResource("1_c16ls")
+health = NodePath("../../../../../../Boss/Health")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HUD/Control/VBoxContainer/VBoxContainer/MarginContainer/ProgressBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="HUD/Control/VBoxContainer/VBoxContainer/MarginContainer/ProgressBar/HBoxContainer"]
+layout_mode = 2
+text = "
+
+BOSS"
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD/Control/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 10
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="PlayerHealthDisplay" type="HBoxContainer" parent="HUD/Control/VBoxContainer/MarginContainer" node_paths=PackedStringArray("health")]
+layout_mode = 2
+script = ExtResource("1_rt2n2")
+health = NodePath("../../../../../Player/Health")
+emptyColor = Color(0.11593, 0.11593, 0.11593, 0.635294)
+liveDisplayPrefab = ExtResource("2_c16ls")
 
 [node name="env" type="Node2D" parent="."]
 
@@ -48,32 +137,56 @@ position = Vector2(0, -6)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="env/MeshInstance2D/StaticBody2D"]
 position = Vector2(0, 6)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_w2twt")
 
-[node name="Polygon2D" type="Polygon2D" parent="env"]
-position = Vector2(-9, 23)
+[node name="test cube" type="Polygon2D" parent="env"]
+position = Vector2(-7, 25)
 color = Color(0.252028, 0.252028, 0.252028, 1)
 polygon = PackedVector2Array(-2, -7, 2, -7, 2, 0, -2, 0)
 
-[node name="StaticBody2D" type="StaticBody2D" parent="env/Polygon2D"]
+[node name="StaticBody2D" type="StaticBody2D" parent="env/test cube"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="env/Polygon2D/StaticBody2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="env/test cube/StaticBody2D"]
 position = Vector2(0, -3.5)
 shape = SubResource("RectangleShape2D_pw63i")
 
+[node name="wall_left" type="Polygon2D" parent="env"]
+position = Vector2(-57, 23)
+color = Color(0.252028, 0.252028, 0.252028, 1)
+polygon = PackedVector2Array(-2, -59, 2, -59, 2, 0, -2, 0)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="env/wall_left"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="env/wall_left/StaticBody2D"]
+position = Vector2(0, -29.5)
+shape = SubResource("RectangleShape2D_7ykc4")
+
+[node name="wall_right" type="Polygon2D" parent="env"]
+position = Vector2(57, 23)
+color = Color(0.252028, 0.252028, 0.252028, 1)
+polygon = PackedVector2Array(-2, -59, 2, -59, 2, 0, -2, 0)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="env/wall_right"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="env/wall_right/StaticBody2D"]
+position = Vector2(0, -29.5)
+shape = SubResource("RectangleShape2D_7ykc4")
+
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(21, 19)
+position = Vector2(1, -1)
 zoom = Vector2(10, 10)
 
-[node name="CharacterBody2D" type="CharacterBody2D" parent="."]
-script = ExtResource("1_w2twt")
-gravityMultiplier = 2.0
-jumpAcceleration = 1000.0
+[node name="Spike" parent="." instance=ExtResource("5_gubc5")]
+position = Vector2(31.4638, 20.0989)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
-shape = SubResource("CapsuleShape2D_und3l")
+[node name="Boss" parent="." instance=ExtResource("4_pu3yx")]
+position = Vector2(45.3579, 13)
 
-[node name="MeshInstance2D" type="MeshInstance2D" parent="CharacterBody2D"]
-scale = Vector2(2, 2)
-mesh = SubResource("CapsuleMesh_und3l")
+[node name="Player" parent="." instance=ExtResource("3_pu3yx")]
+position = Vector2(-49, 19)
+speed = 20.0
+
+[editable path="Boss"]
+[editable path="Boss/Hitbox"]
+[editable path="Boss/Weakpoint/Hurtbox"]
+[editable path="Player"]

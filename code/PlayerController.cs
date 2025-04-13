@@ -22,14 +22,9 @@ public partial class PlayerController : CharacterBody2D {
         if (Input.IsActionJustPressed("jump")) {
             jumpImpulse = true;
         }
-
-        // input = inputSpeed;
-        GD.Print($"{input}");
     }
 
     public override void _PhysicsProcess(double delta) {
-        // Acceleration = Vector2.Zero;
-
         if (!IsOnFloor()) {
             jumpImpulse = false;
             
@@ -46,12 +41,12 @@ public partial class PlayerController : CharacterBody2D {
         }
 
         var velocity = Velocity;
-
+        
+        // add acceleration
         velocity += Acceleration * (float) delta;
 
+        // add move speed
         velocity.X = input * speed;
-
-        GD.Print($"{velocity}");
 
         Velocity = velocity;
 

@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3 uid="uid://b4q63mvngp8m2"]
+
+[ext_resource type="PackedScene" uid="uid://cw03p61elunkq" path="res://code/combat/faction.tscn" id="1_3q83y"]
+[ext_resource type="Script" uid="uid://boecuilcrtxyi" path="res://code/util/Rotator.cs" id="2_6nsjm"]
+[ext_resource type="PackedScene" uid="uid://bbx2xypnyjn0k" path="res://code/combat/hitbox.tscn" id="2_rntm8"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_6nsjm"]
+radius = 1.44597
+
+[node name="Spike" type="Node2D"]
+
+[node name="Faction" parent="." instance=ExtResource("1_3q83y")]
+
+[node name="Body" type="Polygon2D" parent="."]
+rotation = -5.71246
+color = Color(0.958673, 0.201075, 0.155765, 1)
+polygon = PackedVector2Array(0, -3, -1, -1, -3, 0, -1, 1, 0, 3, 1, 1, 3, 0, 1, -1)
+script = ExtResource("2_6nsjm")
+rotationSpeed = 180.0
+
+[node name="Hitbox" parent="." node_paths=PackedStringArray("faction") instance=ExtResource("2_rntm8")]
+faction = NodePath("../Faction")
+
+[node name="CollisionShape2D" parent="Hitbox" index="0"]
+shape = SubResource("CircleShape2D_6nsjm")
+
+[editable path="Hitbox"]

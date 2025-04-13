@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://wmf2bmmg5vwr"]
+
+[ext_resource type="Script" uid="uid://ca8hrbkkc4rct" path="res://code/combat/Health.cs" id="1_o0rjq"]
+
+[node name="Health" type="Node"]
+script = ExtResource("1_o0rjq")
+MaxValue = 5
+Value = 5

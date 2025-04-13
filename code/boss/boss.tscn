@@ -1,0 +1,55 @@
+[gd_scene load_steps=9 format=3 uid="uid://ccgdso7vl6sum"]
+
+[ext_resource type="Script" uid="uid://onkw63p7jeq5" path="res://code/boss/BossController.cs" id="1_8ordx"]
+[ext_resource type="PackedScene" uid="uid://bbx2xypnyjn0k" path="res://code/combat/hitbox.tscn" id="1_pll50"]
+[ext_resource type="PackedScene" uid="uid://bjei845bud33t" path="res://code/combat/hurtbox.tscn" id="2_8ordx"]
+[ext_resource type="PackedScene" uid="uid://wmf2bmmg5vwr" path="res://code/combat/health.tscn" id="2_j2jby"]
+[ext_resource type="PackedScene" uid="uid://cw03p61elunkq" path="res://code/combat/faction.tscn" id="2_nofrw"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pu3yx"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_j2jby"]
+size = Vector2(20, 2)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_c16ls"]
+size = Vector2(4, 4)
+
+[node name="Boss" type="AnimatableBody2D"]
+script = ExtResource("1_8ordx")
+
+[node name="Health" parent="." instance=ExtResource("2_j2jby")]
+MaxValue = 20
+Value = 20
+
+[node name="Faction" parent="." instance=ExtResource("2_nofrw")]
+Value = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_pu3yx")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+color = Color(0.65, 0.078, 0.078, 1)
+polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
+
+[node name="Hitbox" parent="." node_paths=PackedStringArray("faction") instance=ExtResource("1_pll50")]
+position = Vector2(0, 10)
+faction = NodePath("../Faction")
+
+[node name="CollisionShape2D" parent="Hitbox" index="0"]
+shape = SubResource("RectangleShape2D_j2jby")
+
+[node name="Weakpoint" type="Polygon2D" parent="."]
+position = Vector2(0, -1)
+color = Color(0.973743, 0.627371, 0.109682, 1)
+polygon = PackedVector2Array(-2, -1, 2, -1, 2, 3, -2, 3)
+
+[node name="Hurtbox" parent="Weakpoint" node_paths=PackedStringArray("health", "Faction") instance=ExtResource("2_8ordx")]
+position = Vector2(0, 1)
+health = NodePath("../../Health")
+Faction = NodePath("../../Faction")
+
+[node name="CollisionShape2D" parent="Weakpoint/Hurtbox" index="0"]
+shape = SubResource("RectangleShape2D_c16ls")
+
+[editable path="Hitbox"]
+[editable path="Weakpoint/Hurtbox"]
