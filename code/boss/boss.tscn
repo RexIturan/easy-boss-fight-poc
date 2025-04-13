@@ -39,8 +39,8 @@ faction = NodePath("../Faction")
 shape = SubResource("RectangleShape2D_j2jby")
 
 [node name="Weakpoint" type="Polygon2D" parent="."]
-position = Vector2(0, -1)
-color = Color(0.973743, 0.627371, 0.109682, 1)
+position = Vector2(-16, -1)
+color = Color(0.91728, 0.664025, 0, 1)
 polygon = PackedVector2Array(-2, -1, 2, -1, 2, 3, -2, 3)
 
 [node name="Hurtbox" parent="Weakpoint" node_paths=PackedStringArray("health", "Faction") instance=ExtResource("2_8ordx")]

@@ -2,6 +2,7 @@ using Godot;
 
 public partial class Health : Node {
     [Signal] public delegate void ChangedEventHandler(int newValue, int oldValue);
+    [Signal] public delegate void DeathEventHandler();
     
     [Export] public int MaxValue;
     
