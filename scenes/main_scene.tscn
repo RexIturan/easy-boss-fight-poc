@@ -1,0 +1,79 @@
+[gd_scene load_steps=11 format=3 uid="uid://digx4yvk3x66f"]
+
+[ext_resource type="Script" uid="uid://b0vl8a6jh8hdk" path="res://code/PlayerController.cs" id="1_w2twt"]
+
+[sub_resource type="Gradient" id="Gradient_und3l"]
+colors = PackedColorArray(0.442, 0.7072, 0.85, 1, 0.232, 0.377, 0.58, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_w2twt"]
+gradient = SubResource("Gradient_und3l")
+
+[sub_resource type="BoxMesh" id="BoxMesh_und3l"]
+size = Vector3(200, 10, 1)
+
+[sub_resource type="Gradient" id="Gradient_w2twt"]
+colors = PackedColorArray(0.316234, 0.219156, 0.108289, 1, 0.246755, 0.0739143, 0.0152834, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_pw63i"]
+gradient = SubResource("Gradient_w2twt")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_w2twt"]
+size = Vector2(200, 10)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pw63i"]
+size = Vector2(4, 7)
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_und3l"]
+radius = 1.0
+height = 4.0
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_und3l"]
+
+[node name="main" type="Node2D"]
+
+[node name="env" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="env"]
+rotation = 0.788275
+scale = Vector2(2.69477, 2.9538)
+texture = SubResource("GradientTexture2D_w2twt")
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="env"]
+position = Vector2(0, 28)
+mesh = SubResource("BoxMesh_und3l")
+texture = SubResource("GradientTexture2D_pw63i")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="env/MeshInstance2D"]
+position = Vector2(0, -6)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="env/MeshInstance2D/StaticBody2D"]
+position = Vector2(0, 6)
+scale = Vector2(1, 1)
+shape = SubResource("RectangleShape2D_w2twt")
+
+[node name="Polygon2D" type="Polygon2D" parent="env"]
+position = Vector2(-9, 23)
+color = Color(0.252028, 0.252028, 0.252028, 1)
+polygon = PackedVector2Array(-2, -7, 2, -7, 2, 0, -2, 0)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="env/Polygon2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="env/Polygon2D/StaticBody2D"]
+position = Vector2(0, -3.5)
+shape = SubResource("RectangleShape2D_pw63i")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(21, 19)
+zoom = Vector2(10, 10)
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="."]
+script = ExtResource("1_w2twt")
+gravityMultiplier = 2.0
+jumpAcceleration = 1000.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
+shape = SubResource("CapsuleShape2D_und3l")
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="CharacterBody2D"]
+scale = Vector2(2, 2)
+mesh = SubResource("CapsuleMesh_und3l")
