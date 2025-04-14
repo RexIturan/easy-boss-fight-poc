@@ -217,7 +217,6 @@ libraries = {
 polygon = PackedVector2Array(1.69531, -0.273438, 4.67188, 0.117188, 1.72656, 0.5, 1.15625, 0.109375)
 
 [node name="Hitbox" parent="Attacks/strike" node_paths=PackedStringArray("faction") instance=ExtResource("7_5xrwu")]
-damage = 10
 faction = NodePath("../../../Faction")
 
 [node name="CollisionShape2D" parent="Attacks/strike/Hitbox" index="0"]
