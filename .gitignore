@@ -3,4 +3,5 @@
 /android/
 .idea/
 .git/
+build/
 *.user
