@@ -11,6 +11,8 @@ public partial class PlayerController : CharacterBody2D {
     private float input = 0;
     private bool jumping = false;
     private bool jumpImpulse = false;
+    [Export] private int maxJumpCount = 2;
+    private int jumpCount = 0;
 
     public override void _Process(double delta) {
         base._Process(delta);
@@ -25,9 +27,11 @@ public partial class PlayerController : CharacterBody2D {
     }
 
     public override void _PhysicsProcess(double delta) {
+        if (IsOnFloor()) {
+            jumpCount = 0;
+        }
+
         if (!IsOnFloor()) {
-            jumpImpulse = false;
-            
             if (jumping) {
                 Acceleration.Y = dampedGravity * gravityMultiplier;
             } else {
@@ -35,11 +39,12 @@ public partial class PlayerController : CharacterBody2D {
             }
         }
 
-        if (IsOnFloor() && jumpImpulse) {
+        if ((IsOnFloor() || jumpCount < maxJumpCount) && jumpImpulse) {
+            jumpCount++;
             Acceleration.Y = -jumpAcceleration;
-            jumpImpulse = false;
+            jumpImpulse = false;    
         }
-
+        
         var velocity = Velocity;
         
         // add acceleration

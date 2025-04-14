@@ -1,21 +1,42 @@
-[gd_scene load_steps=9 format=3 uid="uid://ccgdso7vl6sum"]
+[gd_scene load_steps=16 format=3 uid="uid://ccgdso7vl6sum"]
 
 [ext_resource type="Script" uid="uid://onkw63p7jeq5" path="res://code/boss/BossController.cs" id="1_8ordx"]
 [ext_resource type="PackedScene" uid="uid://bbx2xypnyjn0k" path="res://code/combat/hitbox.tscn" id="1_pll50"]
 [ext_resource type="PackedScene" uid="uid://bjei845bud33t" path="res://code/combat/hurtbox.tscn" id="2_8ordx"]
 [ext_resource type="PackedScene" uid="uid://wmf2bmmg5vwr" path="res://code/combat/health.tscn" id="2_j2jby"]
 [ext_resource type="PackedScene" uid="uid://cw03p61elunkq" path="res://code/combat/faction.tscn" id="2_nofrw"]
+[ext_resource type="Script" uid="uid://bjikn6ug21q2y" path="res://code/boss/pattern/FollowPath.cs" id="6_n3r87"]
+[ext_resource type="Script" uid="uid://ddovpjf54wlss" path="res://code/boss/pattern/ShootSpikes.cs" id="7_r8f0w"]
+[ext_resource type="Script" uid="uid://bocock5kwbbjk" path="res://code/boss/MoveOnPath.cs" id="8_d17vj"]
+[ext_resource type="PackedScene" uid="uid://bm1m7uj6g521n" path="res://code/combat/projectiles/projectile.tscn" id="8_r8f0w"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pu3yx"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_j2jby"]
 size = Vector2(20, 2)
 
+[sub_resource type="Curve2D" id="Curve2D_d17vj"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 0.081089, -0.805859, 0, 0, 0, 0, -0.818203, -40.3748, 0, 0, 0, 0, -90.9274, -39.8352, 0, 0, 0, 0, -90.5677, -2.06487, 0, 0, 0, 0, 0.167263, -0.805242)
+}
+point_count = 5
+
+[sub_resource type="QuadMesh" id="QuadMesh_4tvuj"]
+
+[sub_resource type="Curve2D" id="Curve2D_r8f0w"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -15, 0, 0, 0, 0, 14, -14, 0, 0, 0, 0, 13, 13, 0, 0, 0, 0, -15, 13, 0, 0, 0, 0, -15, -15, 0, 0, 0, 0, 0, -15, 0, 0, 0, 0, 0, 0)
+}
+point_count = 8
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_c16ls"]
 size = Vector2(4, 4)
 
-[node name="Boss" type="AnimatableBody2D"]
+[node name="Boss" type="AnimatableBody2D" node_paths=PackedStringArray("health", "pattern", "particles2D")]
 script = ExtResource("1_8ordx")
+health = NodePath("Health")
+pattern = NodePath("Pattern")
+particles2D = NodePath("CPUParticles2D")
 
 [node name="Health" parent="." instance=ExtResource("2_j2jby")]
 MaxValue = 20
@@ -38,18 +59,75 @@ faction = NodePath("../Faction")
 [node name="CollisionShape2D" parent="Hitbox" index="0"]
 shape = SubResource("RectangleShape2D_j2jby")
 
-[node name="Weakpoint" type="Polygon2D" parent="."]
-position = Vector2(-16, -1)
+[node name="Pattern" type="Node2D" parent="."]
+
+[node name="MoveAround" type="Node2D" parent="Pattern"]
+
+[node name="FollowPath" type="Node2D" parent="Pattern/MoveAround" node_paths=PackedStringArray("pathFollow2D", "parent")]
+script = ExtResource("6_n3r87")
+pathFollow2D = NodePath("../Path2D/PathFollow2D")
+parent = NodePath("../../..")
+speed = 0.1
+
+[node name="Path2D" type="Path2D" parent="Pattern/MoveAround"]
+top_level = true
+position = Vector2(45.4845, 15.4517)
+curve = SubResource("Curve2D_d17vj")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Pattern/MoveAround/Path2D"]
+position = Vector2(0.081089, -0.805859)
+rotation = -1.59352
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="Pattern/MoveAround/Path2D/PathFollow2D"]
+visible = false
+mesh = SubResource("QuadMesh_4tvuj")
+
+[node name="Shoot_Spikes" type="Node2D" parent="Pattern" node_paths=PackedStringArray("origin")]
+top_level = true
+script = ExtResource("7_r8f0w")
+origin = NodePath("../..")
+projectilePrefab = ExtResource("8_r8f0w")
+Active = true
+
+[node name="Weakpoints" type="Node2D" parent="."]
+
+[node name="Path2D" type="Path2D" parent="Weakpoints"]
+curve = SubResource("Curve2D_r8f0w")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Weakpoints/Path2D"]
+rotation = -1.5708
+script = ExtResource("8_d17vj")
+speed = 10.0
+
+[node name="Weakpoint" type="Polygon2D" parent="Weakpoints/Path2D/PathFollow2D"]
 color = Color(0.91728, 0.664025, 0, 1)
 polygon = PackedVector2Array(-2, -1, 2, -1, 2, 3, -2, 3)
 
-[node name="Hurtbox" parent="Weakpoint" node_paths=PackedStringArray("health", "Faction") instance=ExtResource("2_8ordx")]
+[node name="Hurtbox" parent="Weakpoints/Path2D/PathFollow2D/Weakpoint" node_paths=PackedStringArray("health", "Faction") instance=ExtResource("2_8ordx")]
 position = Vector2(0, 1)
-health = NodePath("../../Health")
-Faction = NodePath("../../Faction")
+health = NodePath("../../../../../Health")
+Faction = NodePath("../../../../../Faction")
 
-[node name="CollisionShape2D" parent="Weakpoint/Hurtbox" index="0"]
+[node name="CollisionShape2D" parent="Weakpoints/Path2D/PathFollow2D/Weakpoint/Hurtbox" index="0"]
 shape = SubResource("RectangleShape2D_c16ls")
 
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+process_mode = 3
+emitting = false
+amount = 128
+one_shot = true
+direction = Vector2(0, -1)
+spread = 47.25
+gravity = Vector2(0, 0)
+initial_velocity_min = 200.0
+initial_velocity_max = 200.0
+orbit_velocity_min = -5.0
+orbit_velocity_max = 5.0
+scale_amount_min = 3.0
+scale_amount_max = 8.3
+color = Color(0.647059, 0.0745098, 0.0745098, 1)
+hue_variation_min = -0.44
+hue_variation_max = 0.29
+
 [editable path="Hitbox"]
-[editable path="Weakpoint/Hurtbox"]
+[editable path="Weakpoints/Path2D/PathFollow2D/Weakpoint/Hurtbox"]

@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://bm1m7uj6g521n"]
+
+[ext_resource type="Script" uid="uid://i23qe3y2npsw" path="res://code/combat/Projectile.cs" id="1_dtj52"]
+[ext_resource type="PackedScene" uid="uid://b4q63mvngp8m2" path="res://code/enemy/spike.tscn" id="2_6fpng"]
+
+[node name="Projectile" type="Node2D"]
+script = ExtResource("1_dtj52")
+Speed = 15.0
+Lifetime = 10.0
+
+[node name="Spike" parent="." instance=ExtResource("2_6fpng")]
+
+[node name="Faction" parent="Spike" index="0"]
+Value = 2
+
+[editable path="Spike"]
+[editable path="Spike/Hitbox"]
