@@ -15,6 +15,10 @@ public partial class Health : Node {
                 health = value;
                 // GD.Print($"health changed was {old}, now {health}");
                 EmitSignal(SignalName.Changed, health, old);
+
+                if (health <= 0) {
+                    EmitSignal(SignalName.Death);
+                }
             }
         }
     }

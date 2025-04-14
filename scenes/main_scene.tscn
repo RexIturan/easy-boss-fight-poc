@@ -1,11 +1,14 @@
-[gd_scene load_steps=17 format=3 uid="uid://digx4yvk3x66f"]
+[gd_scene load_steps=22 format=3 uid="uid://digx4yvk3x66f"]
 
+[ext_resource type="Script" uid="uid://jmu0v0xoobkt" path="res://code/util/GameManager.cs" id="1_18nlu"]
 [ext_resource type="Script" uid="uid://boldtg3vt0c3a" path="res://code/ui/BossHealthbar.cs" id="1_c16ls"]
 [ext_resource type="Script" uid="uid://5vyye30d77ho" path="res://code/ui/PlayerHealthDisplay.cs" id="1_rt2n2"]
+[ext_resource type="Script" uid="uid://lq18y8bpvf75" path="res://code/ui/Hud.cs" id="2_18nlu"]
 [ext_resource type="PackedScene" uid="uid://dlt011oymsi5u" path="res://code/ui/player_life_display.tscn" id="2_c16ls"]
 [ext_resource type="PackedScene" uid="uid://l4el6u4xl8hq" path="res://code/player/player.tscn" id="3_pu3yx"]
 [ext_resource type="PackedScene" uid="uid://ccgdso7vl6sum" path="res://code/boss/boss.tscn" id="4_pu3yx"]
 [ext_resource type="PackedScene" uid="uid://b4q63mvngp8m2" path="res://code/enemy/spike.tscn" id="5_gubc5"]
+[ext_resource type="Script" uid="uid://bjikn6ug21q2y" path="res://code/boss/pattern/FollowPath.cs" id="8_c1pb6"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_18nlu"]
 content_margin_left = 2.0
@@ -47,10 +50,23 @@ size = Vector2(4, 7)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7ykc4"]
 size = Vector2(4, 59)
 
+[sub_resource type="Curve2D" id="Curve2D_6wevv"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 0.081089, -0.805859, 0, 0, 0, 0, -0.818203, -40.3748, 0, 0, 0, 0, -90.9274, -39.8352, 0, 0, 0, 0, -90.5677, -2.06487, 0, 0, 0, 0, 0.167263, -0.805242)
+}
+point_count = 5
+
+[sub_resource type="QuadMesh" id="QuadMesh_c1pb6"]
+
 [node name="main" type="Node2D"]
+
+[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("playerHealth")]
+script = ExtResource("1_18nlu")
+playerHealth = NodePath("../Player/Health")
 
 [node name="HUD" type="CanvasLayer" parent="."]
 visible = false
+script = ExtResource("2_18nlu")
 
 [node name="Control" type="Control" parent="HUD"]
 layout_mode = 3
@@ -173,6 +189,32 @@ polygon = PackedVector2Array(-2, -59, 2, -59, 2, 0, -2, 0)
 position = Vector2(0, -29.5)
 shape = SubResource("RectangleShape2D_7ykc4")
 
+[node name="test cube2" type="Polygon2D" parent="env"]
+position = Vector2(-13.7038, 12.4099)
+rotation = -1.309
+scale = Vector2(0.67684, 3.34741)
+color = Color(0.252028, 0.252028, 0.252028, 1)
+polygon = PackedVector2Array(-2, -7, 2, -7, 2, 0, -2, 0)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="env/test cube2"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="env/test cube2/StaticBody2D"]
+position = Vector2(0, -3.5)
+shape = SubResource("RectangleShape2D_pw63i")
+
+[node name="test cube3" type="Polygon2D" parent="env"]
+position = Vector2(25.3835, 5.81073)
+rotation = -1.61337
+scale = Vector2(0.67684, 3.34741)
+color = Color(0.252028, 0.252028, 0.252028, 1)
+polygon = PackedVector2Array(-2, -7, 2, -7, 2, 0, -2, 0)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="env/test cube3"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="env/test cube3/StaticBody2D"]
+position = Vector2(0, -3.5)
+shape = SubResource("RectangleShape2D_pw63i")
+
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(1, -1)
 zoom = Vector2(10, 10)
@@ -182,6 +224,28 @@ position = Vector2(0.0823021, 21.5507)
 
 [node name="Boss" parent="." instance=ExtResource("4_pu3yx")]
 position = Vector2(45.3579, 13)
+
+[node name="Pattern" type="Node2D" parent="Boss"]
+
+[node name="MoveAround" type="Node2D" parent="Boss/Pattern"]
+
+[node name="FollowPath" type="Node2D" parent="Boss/Pattern/MoveAround" node_paths=PackedStringArray("pathFollow2D", "parent")]
+script = ExtResource("8_c1pb6")
+pathFollow2D = NodePath("../Path2D/PathFollow2D")
+parent = NodePath("../../..")
+speed = 0.1
+
+[node name="Path2D" type="Path2D" parent="Boss/Pattern/MoveAround"]
+top_level = true
+position = Vector2(45.4845, 15.4517)
+curve = SubResource("Curve2D_6wevv")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Boss/Pattern/MoveAround/Path2D"]
+position = Vector2(0.081089, -0.805859)
+rotation = -1.59352
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="Boss/Pattern/MoveAround/Path2D/PathFollow2D"]
+mesh = SubResource("QuadMesh_c1pb6")
 
 [node name="Player" parent="." instance=ExtResource("3_pu3yx")]
 position = Vector2(-49, 19)
